@@ -194,15 +194,14 @@ RCT_EXPORT_METHOD(startMetering)
    }
 }
 
-RCT_EXPORT_METHOD(logMeters)
+RCT_EXPORT_METHOD(levels: (RCTResponseSenderBlock) callback)
 {
    if (!self.audioPlayer) {
       return;
    } else {
-      float left = [self.audioPlayer averagePowerInDecibelsForChannel: 0];
-      float right = [self.audioPlayer averagePowerInDecibelsForChannel: 1];
-      NSLog(@"LEFT METER %f", left);
-      NSLog(@"RIGHT METER %f", right);
+      float left = [self.audioPlayer peakPowerInDecibelsForChannel: 0];
+      float right = [self.audioPlayer peakPowerInDecibelsForChannel: 1];
+      callback(@[@{@"left": [NSString stringWithFormat:@"%f", left], @"right": [NSString stringWithFormat:@"%f", right]}]);
    }
 }
 
@@ -222,7 +221,7 @@ RCT_EXPORT_METHOD(getStatus: (RCTResponseSenderBlock) callback)
       status = @"BUFFERING";
    }
 
-   callback(@[[NSNull null], @{@"status": status, @"progress": progress, @"duration": duration, @"url": self.lastUrlString}]);
+   callback(@[@{@"status": status, @"progress": progress, @"duration": duration, @"url": self.lastUrlString}]);
 }
 
 #pragma mark - StreamingKit Audio Player
