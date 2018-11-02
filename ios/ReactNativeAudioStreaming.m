@@ -184,6 +184,28 @@ RCT_EXPORT_METHOD(stop)
    }
 }
 
+RCT_EXPORT_METHOD(startMetering)
+{
+  NSLog(@"METERING FUNCTION TRIGGERED");
+   if (!self.audioPlayer) {
+      return;
+   } else {
+      self.audioPlayer.meteringEnabled = true;
+   }
+}
+
+RCT_EXPORT_METHOD(logMeters)
+{
+   if (!self.audioPlayer) {
+      return;
+   } else {
+      float left = [self.audioPlayer averagePowerInDecibelsForChannel: 0];
+      float right = [self.audioPlayer averagePowerInDecibelsForChannel: 1];
+      NSLog(@"LEFT METER %f", left);
+      NSLog(@"RIGHT METER %f", right);
+   }
+}
+
 RCT_EXPORT_METHOD(getStatus: (RCTResponseSenderBlock) callback)
 {
    NSString *status = @"STOPPED";
