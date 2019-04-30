@@ -135,6 +135,10 @@ static void PopulateOptionsWithDefault(STKAutoRecoveringHTTPDataSourceOptions* o
         self->options = optionsIn;
         
         reachabilityRef = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr*)&zeroAddress);
+        NSString* hostname = innerDataSourceIn.url.host;
+        if (hostname.length) {
+            reachabilityRef = SCNetworkReachabilityCreateWithName(NULL, [hostname UTF8String]);
+        }
     }
     
     return self;
@@ -145,15 +149,17 @@ static void PopulateOptionsWithDefault(STKAutoRecoveringHTTPDataSourceOptions* o
     BOOL retVal = NO;
     SCNetworkReachabilityContext context = { 0, (__bridge void*)self, NULL, NULL, NULL };
     
-    if (SCNetworkReachabilitySetCallback(reachabilityRef, ReachabilityCallback, &context))
-    {
-		if(SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef, runLoop.getCFRunLoop, kCFRunLoopDefaultMode))
-        {
-            retVal = YES;
+    if (reachabilityRef) {
+        SCNetworkReachabilityContext context = { 0, (__bridge void*)self, NULL, NULL, NULL };
+        if (SCNetworkReachabilitySetCallback(reachabilityRef, ReachabilityCallback, &context)) {
+            if(SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef, runLoop.getCFRunLoop, kCFRunLoopDefaultMode))
+            {
+                return YES;
+            }
         }
     }
     
-    return retVal;
+    return NO;
 }
 
 -(BOOL) registerForEvents:(NSRunLoop*)runLoop
@@ -239,6 +245,8 @@ static void PopulateOptionsWithDefault(STKAutoRecoveringHTTPDataSourceOptions* o
 -(BOOL) hasGotNetworkConnection
 {
     SCNetworkReachabilityFlags flags;
+
+    if (! reachabilityRef) return YES; // Assume reachability, if unknown
     
     if (SCNetworkReachabilityGetFlags(reachabilityRef, &flags))
     {

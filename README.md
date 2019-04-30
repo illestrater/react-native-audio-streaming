@@ -1,13 +1,14 @@
 
 # react-native-audio-streaming
 
-## Credits
+## THIS PROJECT IS NOT MAINTAINED
 
-This is a fork of the react-native-audio-streaming
+react-native-audio-streaming is not maintained anymore. The main purpose was to play shoutcast streams with meta data and display a notification while playing.
 
-https://www.npmjs.com/package/react-native-audio-streaming
+Please see other projects like
 
-I have decided to fork it because is a great project that uses the metadata of the streaming, but there are may bugs and the author has neglected the original project
+- [jsierles/react-native-audio](https://github.com/jsierles/react-native-audio) to play local audio and record
+- [zmxv/react-native-sound](https://github.com/zmxv/react-native-sound) to play local audio with more controls
 
 ## Features
 
@@ -79,7 +80,15 @@ In XCode, in the project navigator, select your project. Add `libReactNativeAudi
   	```
       compile project(':react-native-audio-streaming')
   	```
-  	
+4. If using Proguard then insert the following rules:
+   ```
+   -keep class com.spoledge.aacdecoder.** {
+    *;
+   }
+   ```
+
+   
+   
 ## Usage
 
 ### Playing sound (similar code used by the player UI)
@@ -117,11 +126,6 @@ class PlayerUI extends Component {
 - [ ] Allow to specify custom styles for the player
 - [ ] Handle artwork of artist
 - [ ] Add tests
-
-## Other RN audio projects
-
-- [jsierles/react-native-audio](https://github.com/jsierles/react-native-audio) to play local audio and record
-- [zmxv/react-native-sound](https://github.com/zmxv/react-native-sound) to play local audio with more controls
 
 ## Credits
 
